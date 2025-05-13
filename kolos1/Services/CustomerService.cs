@@ -1,4 +1,5 @@
-﻿using apdb25_pk1.Models;
+﻿using APBD_example_test1_2025.Exceptions;
+using apdb25_pk1.Models;
 using Microsoft.Data.SqlClient;
 
 namespace apdb25_pk1.Services;
@@ -9,7 +10,7 @@ public class CustomerService : ICustomerService
     private readonly string _connectionString;
     public CustomerService(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("Default") ?? string.Empty;
+        _connectionString = configuration.GetConnectionString("LocalDB") ?? string.Empty;
     }
     
     private ICustomerService _customerServiceImplementation;
@@ -120,7 +121,10 @@ public class CustomerService : ICustomerService
             var statusCmd = new SqlCommand("SELECT status_id FROM Status WHERE name = @status", conn, tran);
             statusCmd.Parameters.AddWithValue("@status", "Rented");
             var statusObj = await statusCmd.ExecuteScalarAsync(cancellationToken);
-            if (statusObj == null) return ICustomerService.AddRentalResult.Error;
+            if (statusObj == null)
+            {
+                return ICustomerService.AddRentalResult.Error; 
+            }
             int statusId = (int)statusObj;
 
             
@@ -154,13 +158,16 @@ public class CustomerService : ICustomerService
         
             // 5. Zatwierdź transakcję
             await tran.CommitAsync(cancellationToken);
-            return ICustomerService.AddRentalResult.Success;
+            {
+                return ICustomerService.AddRentalResult.Success;
+            }
         }
         catch(Exception ex)
         {
             await tran.RollbackAsync(cancellationToken);
-            Console.WriteLine($"ERROR: {ex.Message}");
-            return ICustomerService.AddRentalResult.Error;
+            // Console.WriteLine($"ERROR: {ex.Message}");
+            // return ICustomerService.AddRentalResult.Error;
+            throw new NotFoundException($"NotFoundException");
         }
         
     }

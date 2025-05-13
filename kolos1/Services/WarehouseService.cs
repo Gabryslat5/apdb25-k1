@@ -10,7 +10,7 @@ public class WarehouseService : IWarehouseService
     private readonly string _connectionString;
     public WarehouseService(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("Default") ?? string.Empty;
+        _connectionString = configuration.GetConnectionString("LocalDB") ?? string.Empty;
     }
     public async Task<string> AddProductAsync(ProductWarehouseDTO dto, CancellationToken cancellationToken)
     {

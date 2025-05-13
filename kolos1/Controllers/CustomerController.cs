@@ -1,4 +1,5 @@
-﻿using apdb25_pk1.Models;
+﻿using APBD_example_test1_2025.Exceptions;
+using apdb25_pk1.Models;
 using apdb25_pk1.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,18 +30,24 @@ public class CustomerController : ControllerBase
     }
 
     //
-    
+
     [HttpPost("{id}/rentals")]
     public async Task<IActionResult> AddRentals(int id, RentalPutDTO rentalPutDTO, CancellationToken cancellationToken)
     {
-        var result = await _service.AddRentalAsync(id, rentalPutDTO, cancellationToken);
-        return result switch
+        try
         {
-            ICustomerService.AddRentalResult.NotFound => NotFound("Customer or one of the movies does not exist."),
-            ICustomerService.AddRentalResult.Success => Ok("Rental created successfully."),
-            ICustomerService.AddRentalResult.Error => StatusCode(500, "An error occurred during the operation."),
-            _ => BadRequest("Invalid request.")
-        };
+            var result = await _service.AddRentalAsync(id, rentalPutDTO, cancellationToken);
+            return result switch
+            {
+                ICustomerService.AddRentalResult.NotFound => NotFound("Customer or one of the movies does not exist."),
+                ICustomerService.AddRentalResult.Success => Ok("Rental created successfully."),
+                ICustomerService.AddRentalResult.Error => StatusCode(500, "An error occurred during the operation."),
+                _ => BadRequest("Invalid request.")
+            };
+
+        }catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
-    
 }
