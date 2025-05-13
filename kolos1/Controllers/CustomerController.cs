@@ -28,6 +28,8 @@ public class CustomerController : ControllerBase
         return Ok(customer);
     }
 
+    //
+    
     [HttpPost("{id}/rentals")]
     public async Task<IActionResult> AddRentals(int id, RentalPutDTO rentalPutDTO, CancellationToken cancellationToken)
     {
