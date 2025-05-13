@@ -6,7 +6,12 @@ namespace Cwiczenia9_pd.Services;
 
 public class WarehouseService : IWarehouseService
 {
-    private readonly string _connectionString = "Data Source=db-mssql;Initial Catalog=2019SBD;Integrated Security=True;Trust Server Certificate=True;";
+    //private readonly string _connectionString = "Data Source=db-mssql;Initial Catalog=2019SBD;Integrated Security=True;Trust Server Certificate=True;";
+    private readonly string _connectionString;
+    public WarehouseService(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("Default") ?? string.Empty;
+    }
     public async Task<string> AddProductAsync(ProductWarehouseDTO dto, CancellationToken cancellationToken)
     {
         if (dto.Amount <= 0)
