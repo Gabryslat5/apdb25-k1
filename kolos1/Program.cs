@@ -1,10 +1,13 @@
 using apdb25_pk1.Services;
+using Cwiczenia9_pd.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
