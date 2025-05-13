@@ -1,42 +1,40 @@
 ﻿using APBD_example_test1_2025.Exceptions;
-using apdb25_pk1.Models;
 using apdb25_pk1.Services;
+using kolos1.Models;
+using kolos1.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace apdb25_pk1.Controllers;
+namespace kolos1.Controllers;
 
 
 [ApiController]
 [Route("api/[controller]")]
-public class CustomerController : ControllerBase
+public class DeliveryController : ControllerBase
 {
-    private readonly ICustomerService _service;
+    private readonly IDeliveryService _service;
 
-    public CustomerController(ICustomerService service)
+    public DeliveryController(IDeliveryService service)
     {
         _service = service;
     }
-
-    [HttpGet("{id}/rentals")]
-    public async Task<IActionResult> GetCustomerRentals(int id, CancellationToken cancellationToken)
+    
+    [HttpGet("{id}/deliveries")]
+    public async Task<IActionResult> GetDeliveryAsync(int id, CancellationToken cancellationToken)
     {
-        var customer = await _service.GetCustomerIdAsync(id, cancellationToken);
-        if (customer == null)
+        var delivery = await _service.GetDeliveryAsync(id, cancellationToken);
+        if (delivery == null)
         {
-            return NotFound($"Customer with ID {id} not found.");
+            return NotFound($"Delivery with ID {id} not found.");
         }
 
-        return Ok(customer);
+        return Ok(delivery);
     }
-
-    //
-
-    [HttpPost("{id}/rentals")]
-    public async Task<IActionResult> AddRentals(int id, RentalPutDTO rentalPutDTO, CancellationToken cancellationToken)
+    [HttpPost("{id}/deliveries")]
+    public async Task<IActionResult> AddDeliveryAsync(DeliveryAddDTO delivery, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _service.AddRentalAsync(id, rentalPutDTO, cancellationToken);
+            var result = await _service.AddDeliveryAsync(delivery, cancellationToken);
             return result switch
             {
                 ICustomerService.AddRentalResult.NotFound => NotFound("Customer or one of the movies does not exist."),
